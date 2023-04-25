@@ -1,15 +1,27 @@
-# codeup_project_part_1
-My first Codeup project part 1
+# Codeup Project Part I
 
 
-## Project description with goals
+## Project Description
 > To find drivers for customer churn at Telco.
 
+## Project Goal
+> Big goals
 
-## initial hypotheses and/or questions you have of the data, ideas
+
+## Initial hypotheses and/or questions about the data.
 > customers churn because not enough incentives in a long term contract.
 
-## data dictionary
+## THE Big Plan
+project planning (lay out your process through the data science pipeline)
+
+> Acquire
+> Prepare
+> Split
+> Explore
+> Model
+> Conclusion
+
+## Data Dictionary
 
 | Features | Definition |
 | --- | --- |
@@ -38,11 +50,16 @@ My first Codeup project part 1
 | internet_service_type | Customer’s internet service provider (DSL, Fiber optic, No) |
 | payment_type | The customer’s payment method (Electronic check, Mailed check, Bank transfer (automatic), Credit card (automatic)) |
 
-## project planning (lay out your process through the data science pipeline)
-> 
 
 ## instructions or an explanation of how someone else can reproduce your project and findings (What would someone need to be able to recreate your project on their own?)
->
+> Don't do it.
+> 
 
-## key findings, recommendations, and takeaways from your project
->
+## Key findings
+> This was awesome
+
+## Recommendations
+> Take your time
+
+## Takeaways
+> I will do this again
