@@ -10,7 +10,6 @@ My first Codeup project part 1
 > customers churn because not enough incentives in a long term contract.
 
 ## data dictionary
-Certainly! Here's the data dictionary in a markdown table format:
 
 | Features | Definition |
 | --- | --- |
@@ -40,7 +39,10 @@ Certainly! Here's the data dictionary in a markdown table format:
 | payment_type | The customer’s payment method (Electronic check, Mailed check, Bank transfer (automatic), Credit card (automatic)) |
 
 ## project planning (lay out your process through the data science pipeline)
+> 
 
 ## instructions or an explanation of how someone else can reproduce your project and findings (What would someone need to be able to recreate your project on their own?)
+>
 
 ## key findings, recommendations, and takeaways from your project
+>
