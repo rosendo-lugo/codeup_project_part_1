@@ -32,21 +32,59 @@ def data_dictionary(telco_df):
 
 
 # ----------------------------------------------
-def generate_predictions(model, X_test, output_path):
-    # Make predictions on the test set
-    y_pred = model.predict(X_test)
-    y_proba = model.predict_proba(X_test)[:, 1]
+import pandas as pd
+from sklearn.ensemble import RandomForestClassifier
+import acquire as a
+import prepare as p
 
-    # Create a DataFrame with the customer IDs, predicted probabilities, and predicted classes
-    customer_id = X_test["customer_id"]    
-    predictions_df = pd.DataFrame({'customer_id': customer_id, 
-                                'probability_of_churn': y_proba, 
-                                'prediction_of_churn': y_pred})
+def generate_predictions_df():
+    # Get your telco data
+    telco_df = a.get_telco_data()
 
-    # Convert the predicted classes to binary values (1 = churn, 0 = not churn)
-    predictions_df['prediction_of_churn'] = predictions_df['prediction_of_churn'].map({'Yes': 1, 'No': 0})
+    # Clean the new dataset using the new function called prep_telco
+    telco_df = p.prep_telco(telco_df)
 
-    # Write the predictions dataframe to a CSV file
-    predictions_df.to_csv(output_path, index=False)
-    
+    # Split your data into train, validate and test
+    train, validate, test = p.split_function(telco_df, 'churn')
+
+    X_train = train.drop(columns=['customer_id', 'payment_type', 'churn'])
+    X_validate = validate.drop(columns=['customer_id', 'payment_type', 'churn'])
+    X_test = test.drop(columns=['customer_id', 'payment_type', 'churn'])
+
+    # Set target
+    target = 'churn'
+
+    # 'y' variables are series
+    y_train = train[target]
+    y_validate = validate[target]
+    y_test = test[target]
+
+    # load the trained random forest model
+    rf_model = RandomForestClassifier()
+    rf_model.fit(X_train, y_train)
+
+    # make predictions on the test data
+    y_pred = rf_model.predict(X_test)
+    y_proba = rf_model.predict_proba(X_test)[:, 1]
+
+    # get the customer IDs from the test data
+    customer_ids = test['customer_id']
+
+    # create a dataframe with the customer IDs, probabilities, and predictions
+    results_df = pd.DataFrame({
+        'customer_id': customer_ids,
+        'probability_of_churn': y_proba,
+        'prediction_of_churn': y_pred
+    })
+
+    # write the results to a CSV file
+    results_df.to_csv('predictions.csv', index=False)
+
+    # read the CSV file into a Pandas dataframe
+    predictions_df = pd.read_csv('predictions.csv')
+
     return predictions_df
+
+
+
+
