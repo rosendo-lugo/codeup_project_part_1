@@ -29,3 +29,24 @@ def data_dictionary(telco_df):
     left_aligned_df = left_aligned_df.set_table_styles([dict(selector = 'th', props=[('text-align', 'left')])])
 
     return display(left_aligned_df)
+
+
+# ----------------------------------------------
+def generate_predictions(model, X_test, output_path):
+    # Make predictions on the test set
+    y_pred = model.predict(X_test)
+    y_proba = model.predict_proba(X_test)[:, 1]
+
+    # Create a DataFrame with the customer IDs, predicted probabilities, and predicted classes
+    customer_id = X_test["customer_id"]    
+    predictions_df = pd.DataFrame({'customer_id': customer_id, 
+                                'probability_of_churn': y_proba, 
+                                'prediction_of_churn': y_pred})
+
+    # Convert the predicted classes to binary values (1 = churn, 0 = not churn)
+    predictions_df['prediction_of_churn'] = predictions_df['prediction_of_churn'].map({'Yes': 1, 'No': 0})
+
+    # Write the predictions dataframe to a CSV file
+    predictions_df.to_csv(output_path, index=False)
+    
+    return predictions_df
