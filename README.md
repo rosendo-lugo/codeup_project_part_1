@@ -64,11 +64,8 @@
 > 2. Acquire the telco_df data from MySQL or Kaggle. If data is coming form MySQL you need to have access to the data. Request user and password from Codeup instructors. 
 > 3. Run project_1.ipynb to extract telco.csv file.
 
-## Key findings
-> This was awesome
-
 ## Recommendations
-> Take your time
+> Build recommendations based on the findings in the data.
 
 ## Takeaways
-> I will do this again
+> What was learned at the end of the project. 
