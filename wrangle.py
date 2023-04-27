@@ -7,6 +7,7 @@ from prepare import prep_telco
 import numpy as np
 import pandas as pd
 
+from sklearn.ensemble import RandomForestClassifier
 
 # ----------------------------------------------
 def data_dictionary(telco_df):
@@ -32,59 +33,28 @@ def data_dictionary(telco_df):
 
 
 # ----------------------------------------------
-import pandas as pd
-from sklearn.ensemble import RandomForestClassifier
-import acquire as a
-import prepare as p
+def get_predictions_df(rf, X_test, test):
 
-def generate_predictions_df():
-    # Get your telco data
-    telco_df = a.get_telco_data()
-
-    # Clean the new dataset using the new function called prep_telco
-    telco_df = p.prep_telco(telco_df)
-
-    # Split your data into train, validate and test
-    train, validate, test = p.split_function(telco_df, 'churn')
-
-    X_train = train.drop(columns=['customer_id', 'payment_type', 'churn'])
-    X_validate = validate.drop(columns=['customer_id', 'payment_type', 'churn'])
-    X_test = test.drop(columns=['customer_id', 'payment_type', 'churn'])
-
-    # Set target
-    target = 'churn'
-
-    # 'y' variables are series
-    y_train = train[target]
-    y_validate = validate[target]
-    y_test = test[target]
-
-    # load the trained random forest model
-    rf_model = RandomForestClassifier()
-    rf_model.fit(X_train, y_train)
-
-    # make predictions on the test data
-    y_pred = rf_model.predict(X_test)
-    y_proba = rf_model.predict_proba(X_test)[:, 1]
-
-    # get the customer IDs from the test data
-    customer_ids = test['customer_id']
-
+    # Make predictions on X_test
+    y_pred = rf.predict(X_test)
+    y_proba = rf.predict_proba(X_test)[:, 1]
+    
     # create a dataframe with the customer IDs, probabilities, and predictions
     results_df = pd.DataFrame({
-        'customer_id': customer_ids,
+        'customer_id': test.customer_id,
         'probability_of_churn': y_proba,
         'prediction_of_churn': y_pred
     })
-
+    # Map 0 and 1 values to 'not_churn' and 'churn', respectively
+    results_df['prediction_of_churn'] = results_df['prediction_of_churn'].map({0: 'not_churn', 1: 'churn'})
+    
     # write the results to a CSV file
     results_df.to_csv('predictions.csv', index=False)
 
     # read the CSV file into a Pandas dataframe
     predictions_df = pd.read_csv('predictions.csv')
 
+    # display the dataframe in Jupyter Lab
     return predictions_df
 
-
-
-
+# ----------------------------------------------

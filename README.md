@@ -5,21 +5,29 @@
 > To find drivers for customer churn at Telco.
 
 ## Project Goal
-> Big goals
+>- To identify the factors that contribute to customer churn in the Telco dataset.
+>- To develop strategies for retaining customers who are at high risk of churning, based on their tenure and other characteristics.
+>- To determine whether there are specific payment methods that are associated with higher rates of churn and to develop recommendations for improving retention for customers who use those payment methods.
+>- To investigate whether there is a relationship between the number of services a customer has and their likelihood of churning, and to develop strategies for retaining customers who are at high risk of churning based on their service usage.
 
 
 ## Initial hypotheses and/or questions about the data.
-> customers churn because not enough incentives in a long term contract.
+>- What is the distribution of customer churn in the dataset?
+>- How does tenure relate to customer churn?
+>- Is there a relationship between the payment method and churn?
+>- Do customers with tech support tend to churn less often than those without tech support?
 
 ## THE Big Plan
-project planning (lay out your process through the data science pipeline)
+> Gather ideas for the project and develop the hypothesis based on the variables. 
+> Acquire "Get the data", identify were the data is coming from and set functions to bypass security constrains. 
+> Prepare the data by filtering out missing values, nulls, duplicates, irrelavent dtypes. Also, renaming columns and adding new features by encode "get_dummies".
+> Spliting the data into train, validate and test samples. Test is 20% of the original dataset, validate is .30*.80= 24% of the 
+    original dataset, and train is .70*.80= 56% of the original dataset.
+> Explore our takeaways and insights by learning about the context of our data. Understanding our data by using visualizations like histograms, barplots and follow with statistical test and let's not forget about our hypothesize. 
+> Modele stage test your data using different models like Decission Tree, Random Forest, KNN and logistic Regression
+> Conclusion your takeaway from the whole project
 
-> Acquire
-> Prepare
-> Split
-> Explore
-> Model
-> Conclusion
+
 
 ## Data Dictionary
 
@@ -51,9 +59,10 @@ project planning (lay out your process through the data science pipeline)
 | payment_type | The customer’s payment method (Electronic check, Mailed check, Bank transfer (automatic), Credit card (automatic)) |
 
 
-## instructions or an explanation of how someone else can reproduce your project and findings (What would someone need to be able to recreate your project on their own?)
-> Don't do it.
-> 
+## Instructions on how someone else can reproduce this project and findings (What would someone need to be able to recreate your project on their own?)
+> 1. Clone this entire repository.
+> 2. Acquire the telco_df data from MySQL or Kaggle. If data is coming form MySQL you need to have access to the data. Request user and password from Codeup instructors. 
+> 3. Run project_1.ipynb to extract telco.csv file.
 
 ## Key findings
 > This was awesome
