@@ -78,7 +78,6 @@ def get_dt_cr(dt, X_train, y_train):
     # print the classification report
     return print(classification_report(y_train, y_pred))
 
-
 # -----------------------------------------------
 def get_decision_tree(dt, X_train):
     #see the tree that was built
@@ -90,29 +89,6 @@ def get_decision_tree(dt, X_train):
               filled=True #colors our leaves and branches based on the class
              )
     return plt.show()
-
-# -----------------------------------------------
-def get_dt_score2(X_train, y_train, X_validate, y_validate):
-    scores_all = []
-
-    for x in range(1,10):
-
-        dt = DecisionTreeClassifier(max_depth=x)
-        dt.fit(X_train, y_train)
-        # evaluate on train
-        train_acc = dt.score(X_train, y_train)
-
-        #evaluate on validate
-        val_acc = dt.score(X_validate, y_validate)
-
-        # view the difference between train_acc and val_acc
-        diff = train_acc - val_acc
-
-        scores_all.append([x, train_acc, val_acc, diff])
-
-    scores_df = pd.DataFrame(scores_all, columns=['max_depth','train_acc','val_acc','diff'])
-    dt_scores_df = scores_df.sort_values('diff').style.hide_index()
-    return dt_scores_df
 
 # -----------------------------------------------
 def get_dt_score(X_train, y_train, X_validate, y_validate):
@@ -138,30 +114,18 @@ def get_dt_score(X_train, y_train, X_validate, y_validate):
     return dt_scores_df
 
 # -----------------------------------------------
-def get_df_plot2(dt_scores_df):
-    plt.figure(figsize=(12,6))
-    plt.plot(dt_scores_df.max_depth, dt_scores_df.train_acc, label='train', marker='o')
-    plt.plot(dt_scores_df.max_depth, dt_scores_df.val_acc, label='unseen validate', marker='o')
-    plt.xlabel('max depth')
-    plt.ylabel('accuracy')
-    plt.title('how does the accuracy change with max depth on train and validate?')
-    plt.legend()
-    plt.xticks(np.arange(0,10,1))
-    plt.grid()
-    return plt.show()
-
-
-
-
 def get_df_plot(dt_scores_df, max_depth):
     train_acc = dt_scores_df.loc[dt_scores_df.max_depth == max_depth, 'train_acc']
     val_acc = dt_scores_df.loc[dt_scores_df.max_depth == max_depth, 'val_acc']
+    max_val_acc = dt_scores_df.val_acc.max()
+    max_val_depth = dt_scores_df.loc[dt_scores_df.val_acc.idxmax(), 'max_depth']
     
     plt.figure(figsize=(12,6))
     plt.plot(dt_scores_df.max_depth, dt_scores_df.train_acc, label='train', marker='o')
     plt.plot(dt_scores_df.max_depth, dt_scores_df.val_acc, label='unseen validate', marker='o')
     plt.plot(max_depth, train_acc, label=f'train (max depth={max_depth})', marker='o', markersize=10, color='green')
     plt.plot(max_depth, val_acc, label=f'unseen validate (max depth={max_depth})', marker='o', markersize=10, color='red')
+    plt.axvline(max_val_depth, color='gray', linestyle='--', label=f'max val acc ({max_val_acc:.3f}) at max depth={max_val_depth}')
     plt.xlabel('max depth')
     plt.ylabel('accuracy')
     plt.title('how does the accuracy change with max depth on train and validate?')
@@ -169,7 +133,6 @@ def get_df_plot(dt_scores_df, max_depth):
     plt.xticks(np.arange(0,10,1))
     plt.grid()
     return plt.show()
-
 
 # -------------Random Forest--------------------------------
 # Setting the random forest classifier
@@ -248,70 +211,6 @@ def get_rf_accuracy(rf, X_train, y_train):
 
 # -------------------------------------------------------------------------
 # Comparing the random forest train and validation accuracy
-# def get_rf_train_val_acc2(rf, X_train, y_train, X_validate, y_validate):
-#     # Run everything in one simple code. 
-#     scores_all = []
-
-#     for x in range(1,11):
-#         # make the object
-#         rf = RandomForestClassifier(random_state=123, min_samples_leaf=x, max_depth=11-x)
-
-#         # fit the object
-#         rf.fit(X_train, y_train)
-
-#         # transform the object
-#         train_acc = rf.score(X_train, y_train)
-
-#         # evaluate on my validate data
-#         val_acc = rf.score(X_validate, y_validate)
-
-#         # store results in a DataFrame
-#         result = pd.DataFrame({'min_samples_leaf': [x], 'max_depth': [11-x], 'train_acc': [train_acc], 'val_acc': [val_acc]})
-
-#         # append to scores_all list
-#         scores_all.append(result)
-
-#     # combine all results into a single DataFrame
-#     scores_rf = pd.concat(scores_all, ignore_index=True)
-
-#     scores_rf['difference'] = scores_rf.train_acc - scores_rf.val_acc
-
-#     scores_rf = scores_rf.style.hide_index()
-    
-#     return scores_rf
-
-def get_rf_train_val_acc3(rf, X_train, y_train, X_validate, y_validate):
-    # Run everything in one simple code. 
-    scores_all = []
-
-    for x in range(1,11):
-        # make the object
-        rf = RandomForestClassifier(random_state=123, min_samples_leaf=x, max_depth=11-x)
-
-        # fit the object
-        rf.fit(X_train, y_train)
-
-        # transform the object
-        train_acc = rf.score(X_train, y_train)
-
-        # evaluate on my validate data
-        val_acc = rf.score(X_validate, y_validate)
-
-        # store results in a DataFrame
-        result = pd.DataFrame({'min_samples_leaf': [x], 'max_depth': [11-x], 'train_acc': [train_acc], 'val_acc': [val_acc]})
-
-        # append to scores_all list
-        scores_all.append(result)
-
-    # combine all results into a single DataFrame
-    scores_rf = pd.concat(scores_all, ignore_index=True)
-
-    scores_rf['difference'] = scores_rf.train_acc - scores_rf.val_acc
-    
-    scores_rf = scores_rf.style.hide_index()
-
-    return scores_rf
-
 def get_rf_train_val_acc(rf, X_train, y_train, X_validate, y_validate):
     # Run everything in one simple code. 
     scores_all = []
@@ -340,28 +239,82 @@ def get_rf_train_val_acc(rf, X_train, y_train, X_validate, y_validate):
 
     scores_rf['difference'] = scores_rf.train_acc - scores_rf.val_acc
     
-    scores_rf = scores_rf.style.hide_index()
-    
     return scores_rf
 # -------------------------------------------------------
 # Plotting a graph
-def get_rf_plot3(scores_rf):
-    plt.figure(figsize=(12, 6))
-    sns.barplot(x="min_samples_leaf", y="train_acc", hue="max_depth", data=scores_rf, palette="deep")
-    plt.xlabel("Minimum Samples Leaf")
-    plt.ylabel("Accuracy")
-    plt.title("Random Forest Train and Validation Accuracy by Minimum Samples Leaf and Maximum Depth")
-    plt.legend(title="Maximum Depth", loc="upper right")
-    plt.show()
+def get_rf_plot(rf_scores_df): 
+    plt.figure(figsize=(12,6))
+    plt.plot(rf_scores_df.max_depth, rf_scores_df.train_acc, label='train', marker='o')
+    plt.plot(rf_scores_df.max_depth, rf_scores_df.val_acc, label='validation', marker='o')
+    plt.xlabel('Max depth and min samples leaf')
+    plt.ylabel('Accuracy')
 
-def get_rf_plot(scores_rf):
-    plt.figure(figsize=(12, 6))
-    sns.barplot(x="min_samples_leaf", y="train_acc", hue="max_depth", data=scores_rf, palette="deep")
-    plt.xlabel("Minimum Samples Leaf")
-    plt.ylabel("Accuracy")
-    plt.title("Random Forest Training Accuracy by Hyperparameters")
-    plt.legend(title="Max Depth")
-    plt.show()
+    plt.xticks([2,4,6,8,10],
+              [('2, 9'),('4, 7'),('6, 5'),('8, 4'),('10, 2')]
+              )
+
+    plt.title('How does the accuracy change with max depth and min samples leaf on train and validate?')
+
+    # find the row with the best validation accuracy
+    best_row = rf_scores_df.loc[rf_scores_df.difference.abs().idxmin()]
+
+    # add a red circle around the point for the best accuracy
+    plt.plot(best_row.max_depth, best_row.val_acc, marker='o', mec='red', mew=2, ms=10, label='best')
+
+    plt.legend()
+    return plt.show()
+
+def get_rf_plot2(rf_scores_df):
+    max_depths = rf_scores_df.max_depth.unique()
+    min_samples_leaves = rf_scores_df.min_samples_leaf.unique()
+
+    # plot the train and validation accuracy for each combination of max depth and min samples leaf
+    for rf_scores_df.min_samples_leaf in min_samples_leaves:
+        train_acc = rf_scores_df.loc[rf_scores_df.min_samples_leaf == rf_scores_df.min_samples_leaf, 'train_acc']
+        val_acc = rf_scores_df.loc[rf_scores_df.min_samples_leaf == rf_scores_df.min_samples_leaf, 'val_acc']
+        label = f'min samples leaf={rf_scores_df.min_samples_leaf}'
+        plt.plot(max_depths, train_acc, label=f'train ({label})', marker='o')
+        plt.plot(max_depths, val_acc, label=f'validation ({label})', marker='o')
+
+    plt.xlabel('Max depth')
+    plt.ylabel('Accuracy')
+    plt.title('How does the accuracy change with max depth and min samples leaf on train and validate?')
+
+    # find the row with the best validation accuracy
+    best_row = rf_scores_df.loc[rf_scores_df.val_acc.idxmax()]
+
+    # add a red circle around the point for the best accuracy
+    plt.plot(best_row.max_depth, best_row.val_acc, marker='o', mec='red', mew=2, ms=10, label='best')
+
+    plt.legend()
+    plt.xticks(max_depths)
+    plt.grid()
+    return plt.show()
+
+
+# Plotting a graph
+def get_rf_plot3(rf_scores_df): 
+    plt.figure(figsize=(12,6))
+    plt.plot(rf_scores_df.max_depth, rf_scores_df.train_acc, label='Train accuracy', marker='o')
+    plt.plot(rf_scores_df.max_depth, rf_scores_df.val_acc, label='Validation accuracy', marker='o')
+    plt.xlabel('Max depth and min samples leaf')
+    plt.ylabel('Accuracy')
+
+    plt.xticks([2,4,6,8,10],
+              [('2, 9'),('4, 7'),('6, 5'),('8, 4'),('10, 2')]
+              )
+
+    plt.title('How does the accuracy change with max depth and min samples leaf on train and validate?')
+
+    # find the row with the best validation accuracy
+    best_row = rf_scores_df.loc[rf_scores_df.difference.abs().idxmin()]
+
+    # add a red circle around the point for the best accuracy
+    plt.plot(best_row.max_depth, best_row.val_acc, marker='o', mec='red', mew=2, ms=10, label=f'Best validation accuracy: {best_row.val_acc:.2f} (Max depth = {best_row.max_depth}, Min samples leaf = {best_row.min_samples_leaf})')
+
+    plt.legend()
+    return plt.show()
+
 # -------------Logistic Regression--------------------------------
 
 def get_logit(X_train, y_train):
