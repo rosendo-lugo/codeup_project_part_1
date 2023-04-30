@@ -244,64 +244,13 @@ def get_rf_train_val_acc(rf, X_train, y_train, X_validate, y_validate):
 # Plotting a graph
 def get_rf_plot(rf_scores_df): 
     plt.figure(figsize=(12,6))
-    plt.plot(rf_scores_df.max_depth, rf_scores_df.train_acc, label='train', marker='o')
-    plt.plot(rf_scores_df.max_depth, rf_scores_df.val_acc, label='validation', marker='o')
-    plt.xlabel('Max depth and min samples leaf')
-    plt.ylabel('Accuracy')
-
-    plt.xticks([2,4,6,8,10],
-              [('2, 9'),('4, 7'),('6, 5'),('8, 4'),('10, 2')]
-              )
-
-    plt.title('How does the accuracy change with max depth and min samples leaf on train and validate?')
-
-    # find the row with the best validation accuracy
-    best_row = rf_scores_df.loc[rf_scores_df.difference.abs().idxmin()]
-
-    # add a red circle around the point for the best accuracy
-    plt.plot(best_row.max_depth, best_row.val_acc, marker='o', mec='red', mew=2, ms=10, label='best')
-
-    plt.legend()
-    return plt.show()
-
-def get_rf_plot2(rf_scores_df):
-    max_depths = rf_scores_df.max_depth.unique()
-    min_samples_leaves = rf_scores_df.min_samples_leaf.unique()
-
-    # plot the train and validation accuracy for each combination of max depth and min samples leaf
-    for rf_scores_df.min_samples_leaf in min_samples_leaves:
-        train_acc = rf_scores_df.loc[rf_scores_df.min_samples_leaf == rf_scores_df.min_samples_leaf, 'train_acc']
-        val_acc = rf_scores_df.loc[rf_scores_df.min_samples_leaf == rf_scores_df.min_samples_leaf, 'val_acc']
-        label = f'min samples leaf={rf_scores_df.min_samples_leaf}'
-        plt.plot(max_depths, train_acc, label=f'train ({label})', marker='o')
-        plt.plot(max_depths, val_acc, label=f'validation ({label})', marker='o')
-
-    plt.xlabel('Max depth')
-    plt.ylabel('Accuracy')
-    plt.title('How does the accuracy change with max depth and min samples leaf on train and validate?')
-
-    # find the row with the best validation accuracy
-    best_row = rf_scores_df.loc[rf_scores_df.val_acc.idxmax()]
-
-    # add a red circle around the point for the best accuracy
-    plt.plot(best_row.max_depth, best_row.val_acc, marker='o', mec='red', mew=2, ms=10, label='best')
-
-    plt.legend()
-    plt.xticks(max_depths)
-    plt.grid()
-    return plt.show()
-
-
-# Plotting a graph
-def get_rf_plot3(rf_scores_df): 
-    plt.figure(figsize=(12,6))
     plt.plot(rf_scores_df.max_depth, rf_scores_df.train_acc, label='Train accuracy', marker='o')
     plt.plot(rf_scores_df.max_depth, rf_scores_df.val_acc, label='Validation accuracy', marker='o')
     plt.xlabel('Max depth and min samples leaf')
     plt.ylabel('Accuracy')
 
     plt.xticks([2,4,6,8,10],
-              [('2, 9'),('4, 7'),('6, 5'),('8, 4'),('10, 2')]
+              [('2, 2'),('4, 4'),('6, 3'),('8, 5'),('10, 7')]
               )
 
     plt.title('How does the accuracy change with max depth and min samples leaf on train and validate?')
@@ -314,6 +263,84 @@ def get_rf_plot3(rf_scores_df):
 
     plt.legend()
     return plt.show()
+
+
+
+def get_rf_plot2(rf_scores_df, X_train, y_train, X_test, y_test): 
+    # Train a random forest model for different combinations of max depth and min samples leaf
+    max_depths = range(2, 11)
+    min_samples_leaves = range(1, 6)
+    test_accs = []
+    for max_depth in max_depths:
+        row = []
+        for min_samples_leaf in min_samples_leaves:
+            rf = RandomForestClassifier(n_estimators=100, max_depth=max_depth, min_samples_leaf=min_samples_leaf, random_state=42)
+            rf.fit(X_train, y_train)
+            scores_rf = rf.score(X_train, y_train)
+            test_acc = rf.score(X_test, y_test)
+            row.append(test_acc)
+        test_accs.append(row)
+
+    # Create a heatmap
+    sns.set(font_scale=1.2)
+    ax = sns.heatmap(test_accs, annot=True, cmap='Blues', xticklabels=min_samples_leaves, yticklabels=max_depths, fmt='.3f')
+    plt.xlabel('Min samples leaf')
+    plt.ylabel('Max depth')
+    plt.title('Test accuracy of random forest for different combinations of max depth and min samples leaf')
+
+    # find the row with the best test accuracy
+    best_row = np.argmax(np.max(test_accs, axis=1))
+    best_col = np.argmax(np.max(test_accs, axis=0))
+
+    # add a red square around the point for the best accuracy
+    rect = plt.Rectangle((best_col, best_row), 1, 1, fill=False, edgecolor='red', linewidth=2)
+    ax.add_patch(rect)
+
+    plt.legend(['Best 45 combinations of hyperparameters'], bbox_to_anchor=(1.3, 0.5), loc='upper left')
+    return plt.show()
+
+def get_rf_plot3(rf_scores_df, X_train, y_train, X_test, y_test): 
+    # Define the hyperparameters to search
+    max_depths = [2, 4, 6, 8, 10]
+    min_samples_leaves = [2, 4, 5, 7, 9]
+
+    # Train a random forest model for each combination of hyperparameters and record the training and testing accuracies
+    results = []
+    for max_depth in max_depths:
+        for min_samples_leaf in min_samples_leaves:
+            rf = RandomForestClassifier(n_estimators=100, max_depth=max_depth, min_samples_leaf=min_samples_leaf, random_state=42)
+            rf.fit(X_train, y_train)
+            train_acc = rf.score(X_train, y_train)
+            val_acc = rf.score(X_test, y_test)
+            results.append({'max_depth': max_depth, 'min_samples_leaf': min_samples_leaf, 'train_acc': train_acc, 'val_acc': val_acc})
+
+    # Convert the results to a pandas DataFrame
+    results_df = pd.DataFrame(results)
+
+    # Compute the differences between validation and test accuracy for each combination of hyperparameters
+    results_df['val_test_diff'] = results_df['val_acc'] - results_df['train_acc']
+
+    # Pivot the data to create a heatmap
+    heatmap_data = pd.pivot_table(results_df, values='val_test_diff', index='max_depth', columns='min_samples_leaf')
+
+    # Create a heatmap of the differences between validation and test accuracy
+    sns.set(font_scale=1.2)
+    ax = sns.heatmap(heatmap_data, annot=True, cmap='coolwarm', xticklabels=min_samples_leaves, yticklabels=max_depths, fmt='.3f')
+    plt.xlabel('Min samples leaf')
+    plt.ylabel('Max depth')
+    plt.title('Differences between validation and test accuracy for random forest')
+
+    # find the cell with the smallest difference between validation and test accuracy
+    best_row, best_col = np.unravel_index(np.argmin(heatmap_data.values), heatmap_data.shape)
+
+    # add a red square around the cell with the smallest difference
+    rect = plt.Rectangle((best_col, best_row), 1, 1, fill=False, edgecolor='red', linewidth=2)
+    ax.add_patch(rect)
+
+    # add a legend for the red square
+    plt.legend(['Best combination'], bbox_to_anchor=(1.3, 0.5), loc='center left')
+    return plt.show()
+
 
 # -------------Logistic Regression--------------------------------
 
