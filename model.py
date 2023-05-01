@@ -26,7 +26,7 @@ def get_baseline_acc(train):
     baseline_accuracy = (train.churn == 0).mean()
     return baseline_accuracy
 
-# ----------------Decision Treee----------------------------------
+# ------------------------------------------------------------------
 def get_Xs_ys(train, validate, test):
     # Lets drop columns that are objects and don't add any value to the data. Also, we need to remove the 'churn_Yes' column because is our TARGET.
     # Also, lets convert train to X_train.
@@ -52,10 +52,10 @@ def get_dt(X_train, y_train):
 
 # -----------------------------------------------
 # Getting the score
-def get_dt_score(X_train, y_train):
-    dt = DecisionTreeClassifier()
-    dt.fit(X_train, y_train)
-    dt_score = dt.score(X_train, y_train)
+def get_dt_score2(X_train, y_train):
+    dt_score = DecisionTreeClassifier()
+    dt_score.fit(X_train, y_train)
+    dt_score = dt_score.score(X_train, y_train)
     return dt_score
 
 # -----------------------------------------------
@@ -91,7 +91,7 @@ def get_decision_tree(dt, X_train):
     return plt.show()
 
 # -----------------------------------------------
-def get_dt_score(X_train, y_train, X_validate, y_validate):
+def get_dt_score(train, X_train, y_train, X_validate, y_validate, X_test, y_test):
     scores_all = []
 
     for x in range(1,10):
@@ -110,8 +110,15 @@ def get_dt_score(X_train, y_train, X_validate, y_validate):
         scores_all.append([x, train_acc, val_acc, diff])
 
     scores_df = pd.DataFrame(scores_all, columns=['max_depth','train_acc','val_acc','diff'])
+    test_acc = dt.score(X_test, y_test)
     dt_scores_df = scores_df.sort_values('diff')
-    return dt_scores_df
+    baseline = (train.churn == 0).mean()
+    print(f'Baseline: {baseline}')
+    print(f'train data prediction: {dt_scores_df.iloc[6].train_acc}')
+    print(f'validation data prediction: {dt_scores_df.iloc[6].val_acc}')
+    print(f'unseen data prediction: {test_acc}')
+
+
 
 # -----------------------------------------------
 def get_df_plot(dt_scores_df, max_depth):
@@ -211,7 +218,8 @@ def get_rf_accuracy(rf, X_train, y_train):
 
 # -------------------------------------------------------------------------
 # Comparing the random forest train and validation accuracy
-def get_rf_train_val_acc(rf, X_train, y_train, X_validate, y_validate):
+def get_rf_train_val_acc(train, X_train, y_train, X_validate, y_validate):
+    
     # Run everything in one simple code. 
     scores_all = []
 
@@ -236,10 +244,12 @@ def get_rf_train_val_acc(rf, X_train, y_train, X_validate, y_validate):
 
     # combine all results into a single DataFrame
     scores_rf = pd.concat(scores_all, ignore_index=True)
-
     scores_rf['difference'] = scores_rf.train_acc - scores_rf.val_acc
-    
-    return scores_rf
+    baseline = (train.churn == 0).mean()
+    print(f'Baseline: {baseline}')
+    print(f'train data prediction: {scores_rf.iloc[8].train_acc}')
+    print(f'validation data prediction: {scores_rf.iloc[8].val_acc}')
+
 # -------------------------------------------------------
 # Plotting a graph
 def get_rf_plot(rf_scores_df): 
@@ -350,11 +360,15 @@ def get_logit(X_train, y_train):
     return logit
 
 # -------------------------------------------------------    
-def get_logit_score(X_train, y_train):
+def get_logit_score(train, X_train, y_train, X_validate, y_validate):
     logit = LogisticRegression(class_weight='balanced')
     logit.fit(X_train, y_train)
-    logit_score = logit.score(X_train, y_train)
-    return logit_score
+    train_logit_score = logit.score(X_train, y_train)
+    val_logit_score = logit.score(X_validate, y_validate)
+    baseline = (train.churn == 0).mean()
+    print(f'Baseline: {baseline}')
+    print(f'train data prediction: {train_logit_score}')
+    print(f'validation data prediction: {val_logit_score}')
 
 # -----------------------------------------------
 def get_logit_cm(logit,X_train, y_train):
@@ -374,7 +388,7 @@ def get_logit_cr(logit, X_train, y_train):
     return print(classification_report(y_train, y_pred))
 
 # -------------------------------------------------------------------------
-def get_logit_train_val_acc(X_train, y_train, X_validate, y_validate):
+def get_logit_train_val_acc(train, X_train, y_train, X_validate, y_validate):
     scores_all = []
     logit_class_weight = 'balanced'
     
@@ -389,5 +403,5 @@ def get_logit_train_val_acc(X_train, y_train, X_validate, y_validate):
 
     logit_scores_df = pd.concat(scores_all, ignore_index=True)
     logit_scores_df['difference'] = logit_scores_df.train_acc - logit_scores_df.val_acc
-    return logit_scores_df
+
 

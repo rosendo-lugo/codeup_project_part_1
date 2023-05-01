@@ -59,6 +59,8 @@ def prep_telco(telco_df):
                                              'internet_service_type',
                                              'payment_type']], dummy_na=False, drop_first=[True, True])
     telco_df = pd.concat([telco_df, dummy_telco], axis=1)
+    
+    # replaced empty spaces (nulls) with a zero (int)
     telco_df.total_charges = telco_df.total_charges.str.replace(' ', '0').astype(float)
     
     # Lowercase all the columns

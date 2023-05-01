@@ -23,7 +23,7 @@ import acquire as a
 
 
 # ----------------Question 1-------------------------------
-# This shows the distribution between the customers that churn vs the ones that don't. 
+# This shows the imbalance between the customers that churn vs the ones that don't. 
 # The following countplot it show us how imbalance in customers that churn.
 def get_q_one(train):
     # Calculate the percentage of customers who churned and round it to the nearest integer
@@ -39,7 +39,7 @@ def get_q_one(train):
     sns.countplot(x=df_train.churn, data=df_train)
 
     # Set title, x-label and y-label of the plot
-    plt.title('Distribution of Customer Churn')
+    plt.title('Difference between Customer Churn vs Not churn')
     plt.xlabel('Churn')
     plt.ylabel('Count')
 
@@ -56,23 +56,41 @@ def get_q_one(train):
     # Show the plot
     return plt.show()
 
+def get_q_one_countplot2(train):
+    # The relationship between gender and churn
+
+    
+    # # Replace 0s with 'No' and 1s with 'Yes' in the 'churn' column
+    # train['churn'] = train['churn'].replace({0: 'No', 1: 'Yes'})
+    sns.countplot(data=train, x=train.gender_male, hue=train.churn)
+    plt.title('Does gender affect churn')
+    plt.xlabel('Gender')
+    plt.ylabel('Count')
+    return plt.show()
+
     
 # ----------------Question 2-------------------------------
 def get_q_two(train):
-    # Create a figure with two subplots: histogram and box plot
-    fig, axs = plt.subplots(ncols=2, figsize=(15,5))
+    # # Create a figure with two subplots: histogram and box plot
+    # fig, axs = plt.subplots(ncols=2, figsize=(15,5))
 
-    # Histogram subplot
-    sns.histplot(x=train.tenure, data=train, hue=train.churn, element='step', bins=30, kde=True, ax=axs[0])
-    axs[0].set_title('Distribution of Tenure by Churn')
-    axs[0].set_xlabel('Tenure (months)')
-    axs[0].set_ylabel('Count')
-
+    # # Histogram subplot
+    # sns.histplot(x=train.tenure, data=train, hue=train.churn, element='step', bins=30, kde=True, ax=axs[0])
+    # axs[0].set_title('Distribution of Tenure by Churn')
+    # axs[0].set_xlabel('Tenure (months)')
+    # axs[0].set_ylabel('Count')
+    # Copy the train data
+    df_train = train.copy()
+    
+    # Replace 0s with 'No' and 1s with 'Yes' in the 'churn' column
+    df_train['churn'] = df_train['churn'].replace({0: 'No', 1: 'Yes'})
+    
     # Box plot subplot
-    sns.boxplot(x='churn', y='tenure', data=train, ax=axs[1])
-    axs[1].set_title('Box Plot of Tenure by Churn')
-    axs[1].set_xlabel('Churn')
-    axs[1].set_ylabel('Tenure (months)')
+    # sns.boxplot(x='churn', y='tenure', data=train, ax=axs[1])
+    sns.boxplot(x=df_train.churn, y=df_train.tenure, data=df_train)
+    plt.title('Box Plot of Tenure by Churn')
+    plt.xlabel('Churn')
+    plt.ylabel('Tenure (months)')
 
     # Show the plot
     return plt.show()
@@ -97,9 +115,11 @@ def get_q_two_t_test(train):
 
     # Evaluate p-value
     if p < a:
-        print(f'We reject the null hypothesis\nThere is a significant difference in tenure between customers who churned and customers who did not churn.')
+        print(f'p-value {p}')
+        print(f"We reject the null hypothesis\n.")
     else:
-        print(f'We fail to reject the null hypothesis\nThere is no significant difference in tenure between customers who churned and customers who did not churn.')
+        print(f'p-value {p}')
+        print(f"We fail to reject the null hypothesis\n.")
     
 # ----------------Question 3-------------------------------
 def get_q_three_figure(train):
@@ -153,9 +173,9 @@ def get_q_three_demographic_group(train):
     demographic_analysis = demographic_analysis[['gender_male', 'senior_citizen', 'partner_yes', 'dependents_yes', 'total_customers', 'churn_ratio']]
 
     da_df = pd.DataFrame(demographic_analysis)
-    
+    da_df = da_df.sort_values(by='total_customers', ascending=False)
     return da_df
-    
+
 def get_q_three_dg_plot(train):
     # Subset the data to customers who pay by electronic check and have churned
     elec_check_churned = train[(train['payment_type'] == 'Electronic check') & (train['churn'] == 1)]
@@ -228,15 +248,21 @@ def get_q_three_chi2(train):
     # Print the results
     # Evaluate p-value
     if p < a:
-        print(f'We reject the null hypothesis\nThere is a significant relationship between payment method and churn.')
+        print(f'p-value {p}')
+        print(f'We reject the null hypothesis\n')
     else:
-        print(f'We fail to reject the null hypothesis\nThere is no significant relationship between payment method and churn.')
+        print(f'p-value {p}')
+        print(f'We fail to reject the null hypothesis\n')
         
 
 # ----------------Question 4-------------------------------
 def get_q_four_countplot(train):
     # The relationship between tech support and churn
-    sns.countplot(data=train, x=train.tech_support_yes, hue=train.churn)
+    df_train = train.copy()
+    
+    # Replace 0s with 'No' and 1s with 'Yes' in the 'churn' column
+    df_train['churn'] = df_train['churn'].replace({0: 'No', 1: 'Yes'})
+    sns.countplot(data=df_train, x=train.tech_support_yes, hue=train.churn)
     plt.title('Customers with Tech Support')
     plt.xlabel('Has tech support')
     plt.ylabel('Count')
@@ -247,13 +273,15 @@ def get_q_four_chi2(train):
     contingency_table = pd.crosstab(train.tech_support_yes, train.churn)
 
     # Run chi-square test
-    chi2, p_value, dof, expected = chi2_contingency(contingency_table)
+    chi2, p, dof, expected = chi2_contingency(contingency_table)
 
     a = .05
 
     # Print the results
     # Evaluate p-value
-    if p_value < a:
-        print(f'We reject the null hypothesis\nThere is a significant relationship between having tech support and churn.')
+    if p < a:
+        print(f'p-value {p}')
+        print(f'We reject the null hypothesis\n.')
     else:
-        print(f'We fail to reject the null hypothesis\nThere is no significant relationship between having tech support and churn.')
+        print(f'p-value {p}')
+        print(f'We fail to reject the null hypothesis\n.')

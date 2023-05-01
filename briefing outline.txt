@@ -1,0 +1,47 @@
+I. Introduction
+
+Briefly describe the objective of the project, which is to predict customer churn for a telecommunications company.
+II. Data Acquisition and Preparation
+
+Describe the source of the data, which is a publicly available dataset from the telecommunications industry.
+Discuss the steps taken to clean and prepare the data for analysis, such as dropping unnecessary columns, handling missing values, and encoding categorical variables.
+III. Exploratory Data Analysis
+
+Summarize the key findings from the exploratory data analysis, such as the distribution of the target variable (churn) and the relationships between various features and churn.
+IV. Feature Engineering
+
+Describe the creation of new features based on the existing data, such as calculating the total charges for each customer.
+V. Model Selection and Evaluation
+
+Discuss the selection of different classification models, including logistic regression, decision trees, and random forests.
+Explain the metrics used to evaluate the performance of the models, such as accuracy, precision, recall, and F1 score.
+Present the results of the models in a table or chart, showing the accuracy and other relevant metrics.
+VI. Conclusion
+
+Summarize the key findings from the analysis, including the most important features for predicting churn and the best model for the task.
+Discuss potential implications of the findings for the telecommunications company and possible next steps for further analysis.
+
+
+Hello everyone,
+
+Today, I will be presenting a brief summary of my Codeup project 1, which focused on analyzing the Telco customer churn dataset.
+
+Firstly, let's take a look at the problem we're trying to solve. The goal of this project is to develop a model that can predict customer churn in a Telco company. Churn is when a customer ends their relationship with a company and stops doing business with them. In the case of a Telco company, churn can lead to a significant loss in revenue, so it's essential to identify the factors that contribute to churn and find ways to prevent it.
+
+To accomplish this, we used a variety of data exploration, cleaning, and visualization techniques to analyze the Telco customer churn dataset, which contains over 7,000 records of customer information, including demographics, services, and account information.
+
+Our analysis revealed that the most significant factors contributing to churn were tenure, contract type, and monthly charges. We also found that customers who subscribed to fiber optic internet were more likely to churn, as they had a higher monthly charge and shorter tenure than those who subscribed to DSL internet.
+
+Next, we built several machine learning models to predict customer churn, including logistic regression, decision trees, random forests, and gradient boosting. After tuning the hyperparameters and evaluating the models' performance, we found that the random forest model had the best performance, with an accuracy of 80% and an F1 score of 56%.
+
+Finally, we used our best model to generate insights into the factors contributing to customer churn. We found that customers with month-to-month contracts were more likely to churn, especially if they were paying higher monthly charges or had fiber optic internet. This suggests that the company could improve customer retention by offering longer-term contracts or reducing monthly charges for customers on fiber optic internet.
+
+In conclusion, our analysis of the Telco customer churn dataset revealed that tenure, contract type, and monthly charges were the most significant factors contributing to churn, and we were able to develop a machine learning model that could predict churn with reasonable accuracy. Our findings suggest that Telco companies should focus on improving customer retention by offering longer-term contracts, reducing monthly charges for fiber optic internet, and providing incentives to customers who have been with the company for a long time.
+
+Thank you for your attention, and I hope you found this presentation informative.
+
+
+
+
+
+
